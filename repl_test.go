@@ -19,6 +19,14 @@ func TestCleanInput(t *testing.T) {
 			input:    "Not-Adding-Whitespace",
 			expected: []string{"not-adding-whitespace"},
 		},
+		{
+			input:    "",
+			expected: []string{},
+		},
+		{
+			input:    "test\ttabs\n",
+			expected: []string{"test", "tabs"},
+		},
 		// add more cases here
 	}
 	// loop over the cases and run the tests:
