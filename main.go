@@ -9,12 +9,16 @@ import (
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	var input string
-	var answer string
+	fmt.Print("Welcome to the Pokedex!\n")
 	for {
 		fmt.Print("Pokedex > ")
 		scanner.Scan()
 		input = cleanInput(scanner.Text())[0]
-		answer = "Your command was: " + input
-		fmt.Println(answer)
+		value, ok := commands[input]
+		if !ok {
+			fmt.Print("Unknown command\n")
+			continue
+		}
+		value.callback()
 	}
 }
