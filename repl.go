@@ -8,19 +8,19 @@ import (
 
 func cleanInput(text string) []string {
 	formatText := strings.ToLower(text)
-	endresult := strings.Fields(formatText)
-	return endresult
+	finalText := strings.Fields(formatText)
+	return finalText
 }
 
 func commandExit() error {
 	fmt.Print("Closing the Pokedex... Goodbye!\n")
 	os.Exit(0)
-	return fmt.Errorf("")
+	return nil
 }
 
 func commandHelp() error {
-	fmt.Print("Displays a help message\n")
-	return fmt.Errorf("")
+	fmt.Println("Displays a help message")
+	return nil
 }
 
 type cliCommand struct {
