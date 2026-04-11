@@ -12,6 +12,9 @@ func cleanInput(text string) []string {
 	return finalText
 }
 
+func commandMap() error {
+	return nil
+}
 func commandExit() error {
 	fmt.Print("Closing the Pokedex... Goodbye!\n")
 	os.Exit(0)
@@ -34,6 +37,12 @@ var commands = map[string]cliCommand{
 		name:        "exit",
 		description: "Exit the Pokedex",
 		callback:    commandExit,
+	},
+	"map": {
+		name: "map",
+		description: `Display 20 location areas in the pokemon world.
+		Subsequent calls display the next 20.`,
+		callback: commandMap,
 	},
 	"help": {
 		name:        "help",
