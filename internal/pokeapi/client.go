@@ -7,9 +7,16 @@ import (
 	"net/http"
 )
 
-type Location struct {
+type LocationAreaResponse struct {
+	Count    int                `json:"count"`
+	Next     string             `json:"next"`
+	Previous interface{}        `json:"previous"`
+	Results  []LocationAreaItem `json:"results"`
+}
+
+type LocationAreaItem struct {
 	Name string `json:"name"`
-	Url  string `json:"url"`
+	URL  string `json:"url"`
 }
 
 func GetLocations() error {
@@ -19,14 +26,17 @@ func GetLocations() error {
 	}
 	defer res.Body.Close()
 
-	var locations []Location
+	var locationResponse LocationAreaResponse
 
 	decoder := json.NewDecoder(res.Body)
 
-	if err := decoder.Decode(&locations); err != nil {
+	if err := decoder.Decode(&locationResponse); err != nil {
 		fmt.Println("Error decoding response body.")
 		return err
 	}
-	fmt.Println(locations)
-	return err
+	locations := locationResponse.Results
+	for i := range locations {
+		fmt.Println(locations[i].Name)
+	}
+	return nil
 }
