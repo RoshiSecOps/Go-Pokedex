@@ -22,7 +22,7 @@ type LocationAreaItem struct {
 func GetLocations() error {
 	res, err := http.Get("https://pokeapi.co/api/v2/location-area/")
 	if err != nil {
-		return fmt.Errorf("Request failed: %v", err)
+		return fmt.Errorf("Request failed: %w", err)
 	}
 	defer res.Body.Close()
 
@@ -35,8 +35,8 @@ func GetLocations() error {
 		return err
 	}
 	locations := locationResponse.Results
-	for i := range locations {
-		fmt.Println(locations[i].Name)
+	for _, location := range locations {
+		fmt.Println(location.Name)
 	}
 	return nil
 }
