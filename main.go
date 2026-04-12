@@ -9,6 +9,7 @@ import (
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Print("Welcome to the Pokedex!\n")
+	cfg := config{}
 	for {
 		fmt.Print("Pokedex > ")
 		scanner.Scan()
@@ -22,7 +23,7 @@ func main() {
 			fmt.Println("Unknown command")
 			continue
 		}
-		if err := command.callback(); err != nil {
+		if err := command.callback(&cfg); err != nil {
 			fmt.Println(err)
 		}
 	}

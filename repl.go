@@ -8,22 +8,33 @@ import (
 	"github.com/RoshiSecOps/Go-Pokedex/internal/pokeapi"
 )
 
+type config struct {
+	Next     *string
+	Previous *string
+}
+
 func cleanInput(text string) []string {
 	formatText := strings.ToLower(text)
 	finalText := strings.Fields(formatText)
 	return finalText
 }
 
-func commandMap() error {
-	return nil
-}
-func commandExit() error {
+func commandExit(cfg *config) error {
 	fmt.Print("Closing the Pokedex... Goodbye!\n")
 	os.Exit(0)
 	return nil
 }
 
-func commandHelp() error {
+func commandMap(cfg *config) error {
+	url := "https://pokeapi.co/api/v2/location-area/"
+	if cfg.Next != nil {
+		url = *cfg.Next
+	}
+	pokeapi.GetLocations(url)
+	return nil
+}
+
+func commandHelp(cfg *config) error {
 	fmt.Println("Displays a help message")
 	return nil
 }
@@ -31,7 +42,7 @@ func commandHelp() error {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*config) error
 }
 
 var commands = map[string]cliCommand{
@@ -44,7 +55,7 @@ var commands = map[string]cliCommand{
 		name: "map",
 		description: `Display 20 location areas in the pokemon world.
 		Subsequent calls display the next 20.`,
-		callback: pokeapi.GetLocations,
+		callback: commandMap,
 	},
 	"help": {
 		name:        "help",

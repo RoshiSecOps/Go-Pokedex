@@ -9,8 +9,8 @@ import (
 
 type LocationAreaResponse struct {
 	Count    int                `json:"count"`
-	Next     string             `json:"next"`
-	Previous interface{}        `json:"previous"`
+	Next     *string            `json:"next"`
+	Previous *string            `json:"previous"`
 	Results  []LocationAreaItem `json:"results"`
 }
 
@@ -19,10 +19,10 @@ type LocationAreaItem struct {
 	URL  string `json:"url"`
 }
 
-func GetLocations() error {
-	res, err := http.Get("https://pokeapi.co/api/v2/location-area/")
+func GetLocations(URL string) (next string, previous string, err error) {
+	res, err := http.Get(URL)
 	if err != nil {
-		return fmt.Errorf("Request failed: %w", err)
+		return "", "", fmt.Errorf("Request failed: %w", err)
 	}
 	defer res.Body.Close()
 
@@ -32,11 +32,21 @@ func GetLocations() error {
 
 	if err := decoder.Decode(&locationResponse); err != nil {
 		fmt.Println("Error decoding response body.")
-		return err
+		return "", "", err
+	}
+	if locationResponse.Next != nil {
+		next = *locationResponse.Next
+	} else {
+		next = ""
+	}
+	if locationResponse.Previous != nil {
+		previous = *locationResponse.Previous
+	} else {
+		previous = ""
 	}
 	locations := locationResponse.Results
 	for _, location := range locations {
 		fmt.Println(location.Name)
 	}
-	return nil
+	return next, previous, nil
 }
