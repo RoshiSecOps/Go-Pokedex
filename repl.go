@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/RoshiSecOps/Go-Pokedex/internal/pokeapi"
 )
 
 func cleanInput(text string) []string {
@@ -42,7 +44,7 @@ var commands = map[string]cliCommand{
 		name: "map",
 		description: `Display 20 location areas in the pokemon world.
 		Subsequent calls display the next 20.`,
-		callback: commandMap,
+		callback: pokeapi.GetLocations,
 	},
 	"help": {
 		name:        "help",
