@@ -25,6 +25,22 @@ func commandExit(cfg *config) error {
 	return nil
 }
 
+func commandMapBack(cfg *config) error {
+	var url string
+	if cfg.Previous == nil || *cfg.Previous == "" {
+		fmt.Println("you're on the first page")
+		return nil
+	}
+	url = *cfg.Previous
+	next, previous, err := pokeapi.GetLocations(url)
+	if err != nil {
+		return err
+	}
+	cfg.Next = &next
+	cfg.Previous = &previous
+	return nil
+}
+
 func commandMap(cfg *config) error {
 	url := "https://pokeapi.co/api/v2/location-area/"
 	if cfg.Next != nil {
@@ -61,6 +77,12 @@ var commands = map[string]cliCommand{
 		description: `Display 20 location areas in the pokemon world.
 		Subsequent calls display the next 20.`,
 		callback: commandMap,
+	},
+	"mapb": {
+		name: "map",
+		description: `Display previous 20 location areas in the pokemon world.
+		Subsequent calls display even older ones, if not on first page.`,
+		callback: commandMapBack,
 	},
 	"help": {
 		name:        "help",
