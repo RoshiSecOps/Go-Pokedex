@@ -30,7 +30,12 @@ func commandMap(cfg *config) error {
 	if cfg.Next != nil {
 		url = *cfg.Next
 	}
-	pokeapi.GetLocations(url)
+	next, previous, err := pokeapi.GetLocations(url)
+	if err != nil {
+		return err
+	}
+	cfg.Next = &next
+	cfg.Previous = &previous
 	return nil
 }
 
