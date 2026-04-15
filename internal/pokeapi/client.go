@@ -27,38 +27,21 @@ func GetLocations(URL string, c *pokecache.Cache) (next string, previous string,
 	var data []byte
 	cacheEntry, ok := c.Get(URL)
 	if ok {
-		if err := json.Unmarshal(cacheEntry, &locationResponse); err != nil {
-			fmt.Println("Error Unmarshaling response body.")
+		data = cacheEntry
+	} else {
+		res, err := http.Get(URL)
+		if err != nil {
+			return "", "", fmt.Errorf("Request failed: %w", err)
+		}
+		defer res.Body.Close()
+
+		value, err := io.ReadAll(res.Body)
+		if err != nil {
 			return "", "", err
 		}
-		if locationResponse.Next != nil {
-			next = *locationResponse.Next
-		} else {
-			next = ""
-		}
-		if locationResponse.Previous != nil {
-			previous = *locationResponse.Previous
-		} else {
-			previous = ""
-		}
-		locations := locationResponse.Results
-		for _, location := range locations {
-			fmt.Println(location.Name)
-		}
-		return next, previous, nil
+		data = value
+		c.Add(URL, data)
 	}
-	res, err := http.Get(URL)
-	if err != nil {
-		return "", "", fmt.Errorf("Request failed: %w", err)
-	}
-	defer res.Body.Close()
-
-	data, err := io.ReadAll(res.Body)
-	if err != nil {
-		return "", "", err
-	}
-	c.Add(URL, data)
-
 	if err := json.Unmarshal(data, &locationResponse); err != nil {
 		fmt.Println("Error decoding response body.")
 		return "", "", err
