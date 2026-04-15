@@ -6,11 +6,13 @@ import (
 	"strings"
 
 	"github.com/RoshiSecOps/Go-Pokedex/internal/pokeapi"
+	"github.com/RoshiSecOps/Go-Pokedex/internal/pokecache"
 )
 
 type config struct {
 	Next     *string
 	Previous *string
+	Cache    *pokecache.Cache
 }
 
 func cleanInput(text string) []string {
@@ -32,7 +34,7 @@ func commandMapBack(cfg *config) error {
 		return nil
 	}
 	url = *cfg.Previous
-	next, previous, err := pokeapi.GetLocations(url)
+	next, previous, err := pokeapi.GetLocations(url, cfg.Cache)
 	if err != nil {
 		return err
 	}
@@ -46,7 +48,7 @@ func commandMap(cfg *config) error {
 	if cfg.Next != nil {
 		url = *cfg.Next
 	}
-	next, previous, err := pokeapi.GetLocations(url)
+	next, previous, err := pokeapi.GetLocations(url, cfg.Cache)
 	if err != nil {
 		return err
 	}
