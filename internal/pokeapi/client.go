@@ -4,6 +4,7 @@ package pokeapi
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -28,9 +29,12 @@ func GetLocations(URL string) (next string, previous string, err error) {
 
 	var locationResponse LocationAreaResponse
 
-	decoder := json.NewDecoder(res.Body)
+	data, err := io.ReadAll(res.Body)
+	if err != nil {
+		return "", "", err
+	}
 
-	if err := decoder.Decode(&locationResponse); err != nil {
+	if err := json.Unmarshal(data, &locationResponse); err != nil {
 		fmt.Println("Error decoding response body.")
 		return "", "", err
 	}
