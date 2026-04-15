@@ -28,8 +28,14 @@ func main() {
 			fmt.Println("Unknown command")
 			continue
 		}
-		if err := command.callback(&cfg); err != nil {
-			fmt.Println(err)
+		if len(words) > 1 {
+			if err := command.callback(&cfg, words[1]); err != nil {
+				fmt.Println(err)
+			}
+		} else {
+			if err := command.callback(&cfg); err != nil {
+				fmt.Println(err)
+			}
 		}
 	}
 }

@@ -21,13 +21,20 @@ func cleanInput(text string) []string {
 	return finalText
 }
 
-func commandExit(cfg *config) error {
+func commandExit(cfg *config, args ...string) error {
 	fmt.Print("Closing the Pokedex... Goodbye!\n")
 	os.Exit(0)
 	return nil
 }
+func commandExplore(cfg *config, args ...string) error {
+	if len(args) == 0 {
+		return fmt.Errorf("please provide a location name")
+	}
+	pokeapi.GetPokemons(args[0], cfg.Cache)
+	return nil
+}
 
-func commandMapBack(cfg *config) error {
+func commandMapBack(cfg *config, args ...string) error {
 	var url string
 	if cfg.Previous == nil || *cfg.Previous == "" {
 		fmt.Println("you're on the first page")
@@ -43,7 +50,7 @@ func commandMapBack(cfg *config) error {
 	return nil
 }
 
-func commandMap(cfg *config) error {
+func commandMap(cfg *config, args ...string) error {
 	url := "https://pokeapi.co/api/v2/location-area/"
 	if cfg.Next != nil {
 		url = *cfg.Next
@@ -57,7 +64,7 @@ func commandMap(cfg *config) error {
 	return nil
 }
 
-func commandHelp(cfg *config) error {
+func commandHelp(cfg *config, args ...string) error {
 	fmt.Println("Displays a help message")
 	return nil
 }
@@ -65,7 +72,7 @@ func commandHelp(cfg *config) error {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config) error
+	callback    func(*config, ...string) error
 }
 
 var commands = map[string]cliCommand{
@@ -73,6 +80,11 @@ var commands = map[string]cliCommand{
 		name:        "exit",
 		description: "Exit the Pokedex",
 		callback:    commandExit,
+	},
+	"explore": {
+		name:        "explore",
+		description: "Display Pokemons from a give location",
+		callback:    commandExplore,
 	},
 	"map": {
 		name: "map",
