@@ -76,7 +76,22 @@ func commandCatch(cfg *config, args ...string) error {
 		return nil
 	}
 }
-
+func commandInspect(cfg *config, args ...string) error {
+	if len(args) == 0 {
+		return fmt.Errorf("Please provide a Pokemon name to inspect")
+	}
+	targetName := strings.ToLower(args[0])
+	target, ok := cfg.Pokedex[targetName]
+	if !ok {
+		return fmt.Errorf("you have not caught that pokemon")
+	}
+	info := fmt.Sprintf(`
+	Name: %s
+	Height: %d
+	Weight: %d`, target.Name, target.Height, target.Weight)
+	fmt.Println(info)
+	return nil
+}
 func commandMap(cfg *config, args ...string) error {
 	url := "https://pokeapi.co/api/v2/location-area/"
 	if cfg.Next != nil {
@@ -107,6 +122,11 @@ var commands = map[string]cliCommand{
 		name:        "exit",
 		description: "Exit the Pokedex",
 		callback:    commandExit,
+	},
+	"inspect": {
+		name:        "inspect",
+		description: "Inspect a pokemon from your Pokedex",
+		callback:    commandInspect,
 	},
 	"catch": {
 		name:        "catch pokemon",
