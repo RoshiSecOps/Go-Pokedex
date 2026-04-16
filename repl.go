@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"strings"
 
@@ -13,6 +14,7 @@ type config struct {
 	Next     *string
 	Previous *string
 	Cache    *pokecache.Cache
+	Pokedex  map[string]pokeapi.Pokemon
 }
 
 func cleanInput(text string) []string {
@@ -49,6 +51,31 @@ func commandMapBack(cfg *config, args ...string) error {
 	cfg.Previous = &previous
 	return nil
 }
+func commandCatch(cfg *config, args ...string) error {
+	var monsterTier int
+	targetName := strings.ToLower(args[0])
+	fmt.Printf("Throwing a Pokeball at %v...\n", targetName)
+	diceRoll := rand.Intn(10)
+	targetPokemon, err := pokeapi.GetPokemonStats(targetName, cfg.Cache)
+	if err != nil {
+		return err
+	}
+	if targetPokemon.BaseExperience < 300 {
+		monsterTier = 3
+	} else if targetPokemon.BaseExperience < 800 {
+		monsterTier = 5
+	} else {
+		monsterTier = 8
+	}
+	if diceRoll > monsterTier {
+		fmt.Printf("%s was caught!\n", targetName)
+		cfg.Pokedex[targetName] = targetPokemon
+		return nil
+	} else {
+		fmt.Printf("%s escaped!\n", targetName)
+		return nil
+	}
+}
 
 func commandMap(cfg *config, args ...string) error {
 	url := "https://pokeapi.co/api/v2/location-area/"
@@ -80,6 +107,11 @@ var commands = map[string]cliCommand{
 		name:        "exit",
 		description: "Exit the Pokedex",
 		callback:    commandExit,
+	},
+	"catch": {
+		name:        "catch pokemon",
+		description: "Attempt to catch a pokemon",
+		callback:    commandCatch,
 	},
 	"explore": {
 		name:        "explore",
