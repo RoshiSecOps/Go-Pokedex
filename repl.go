@@ -85,13 +85,23 @@ func commandInspect(cfg *config, args ...string) error {
 	if !ok {
 		return fmt.Errorf("you have not caught that pokemon")
 	}
-	info := fmt.Sprintf(`
-	Name: %s
-	Height: %d
-	Weight: %d`, target.Name, target.Height, target.Weight)
+	info := fmt.Sprintf("Name: %s\nHeight: %d\nWeight: %d", target.Name, target.Height, target.Weight)
+	fmt.Println("--------------")
 	fmt.Println(info)
+	fmt.Println("Stats:")
+	for _, stat := range target.Stats {
+		fmt.Println("-", stat.Stat.Name, ":", stat.BaseStat)
+	}
 	return nil
 }
+
+func commandPokedex(cfg *config, args ...string) error {
+	for _, pokemon := range cfg.Pokedex {
+		fmt.Println("- ", pokemon.Name)
+	}
+	return nil
+}
+
 func commandMap(cfg *config, args ...string) error {
 	url := "https://pokeapi.co/api/v2/location-area/"
 	if cfg.Next != nil {
@@ -127,6 +137,11 @@ var commands = map[string]cliCommand{
 		name:        "inspect",
 		description: "Inspect a pokemon from your Pokedex",
 		callback:    commandInspect,
+	},
+	"pokedex": {
+		name:        "pokedex",
+		description: "List acquired pokemon",
+		callback:    commandPokedex,
 	},
 	"catch": {
 		name:        "catch pokemon",
