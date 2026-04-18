@@ -31,6 +31,9 @@ func main() {
 			fmt.Println("Unknown command")
 			continue
 		}
+		if input == "help" {
+			listCommands()
+		}
 		if len(words) > 1 {
 			if err := command.callback(&cfg, words[1]); err != nil {
 				fmt.Println(err)

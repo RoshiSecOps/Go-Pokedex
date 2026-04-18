@@ -117,7 +117,6 @@ func commandMap(cfg *config, args ...string) error {
 }
 
 func commandHelp(cfg *config, args ...string) error {
-	fmt.Println("Displays a help message")
 	return nil
 }
 
@@ -125,6 +124,14 @@ type cliCommand struct {
 	name        string
 	description string
 	callback    func(*config, ...string) error
+}
+
+func listCommands() {
+	for _, command := range commands {
+		cname := command.name
+		cdes := command.description
+		fmt.Println(cname, ":", cdes)
+	}
 }
 
 var commands = map[string]cliCommand{
@@ -154,16 +161,14 @@ var commands = map[string]cliCommand{
 		callback:    commandExplore,
 	},
 	"map": {
-		name: "map",
-		description: `Display 20 location areas in the pokemon world.
-		Subsequent calls display the next 20.`,
-		callback: commandMap,
+		name:        "map",
+		description: "Display 20 location areas in the pokemon world. Subsequent calls display the next 20.",
+		callback:    commandMap,
 	},
 	"mapb": {
-		name: "map",
-		description: `Display previous 20 location areas in the pokemon world.
-		Subsequent calls display even older ones, if not on first page.`,
-		callback: commandMapBack,
+		name:        "map",
+		description: "Display previous 20 location areas in the pokemon world. Subsequent calls display even older ones, if not on first page.",
+		callback:    commandMapBack,
 	},
 	"help": {
 		name:        "help",
